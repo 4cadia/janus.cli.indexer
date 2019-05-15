@@ -21,6 +21,9 @@
     "clear": "^0.1.0",
     "commander": "^2.20.0",
     "figlet": "^1.2.1",
-    "janusndxr": "0.0.11"
+    "fluent-ts-validator": "^3.0.2",
+    "janusndxr": "0.0.13",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^3.2.0"
   }
 }

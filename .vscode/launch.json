@@ -6,7 +6,8 @@
     "configurations": [
         {
             "args": [
-                "--ipfs=QmfGoa2WXVm8mGHWufisEnbJXJAAmx4UeTygpQZXLAJZZd",
+                "--content=C:\\Users\\Victor Hugo Ramos\\Downloads\\Ipfs\\lua.html",
+                "--type=path",
                 "--address=0x0f0b73171eb91c502e10c93306c2b84596363f30"
             ],
             "type": "node",

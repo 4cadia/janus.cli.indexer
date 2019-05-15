@@ -2,9 +2,10 @@
   "name": "janus.cli.indexer",
   "version": "1.0.0",
   "description": "janus.cli.indexer",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ."
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
     "commander": "^2.20.0",
-    "figlet": "^1.2.1"
+    "figlet": "^1.2.1",
+    "janusndxr": "0.0.11"
   }
 }

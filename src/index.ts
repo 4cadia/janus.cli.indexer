@@ -15,10 +15,11 @@ program
     .version('0.0.1')
     .description("Janus CLI - Web3 Indexer")
     .option('-C, --content <item>', 'Content to be indexed')
-    .option('-T, --type <item>', 'Content type,must be "hash" or "path"')
+    .option('-T, --type <item>', 'Content type,must be "hash","file" or "folder"')
     .option('-A, --address <item>', 'Your ETH adress')
+    .option('-K, --key <item>', 'Your Private Key')
     .action(args => {
-        Bootstrapper.RegisterServices();
+        Bootstrapper.RegisterServices(args.key);
         let indexRequest = new IndexRequest();
         let indexerCliService = Bootstrapper.Resolve<IIndexerCliService>("IIndexerCliService");
         indexRequest.Content = args.content;

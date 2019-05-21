@@ -20,10 +20,6 @@ export default class IndexerCliValidator extends AbstractValidator<IndexRequest>
             .isNotEmpty()
             .withFailureMessage("Address must not be empty");
 
-        this.validateIf(cli => this._spiderConfig.PrivateKey)
-            .isNotEmpty()
-            .withFailureMessage("Private Key must not be empty");
-
         return this.validate(indexRequest);
     }
 }

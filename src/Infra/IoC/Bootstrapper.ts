@@ -9,7 +9,7 @@ export default class Bootstrapper {
     static Resolve<T>(token: InjectionToken<T>): T {
         return container.resolve(token);
     }
-    static RegisterServices(privateKey: string) {
+    static RegisterServices(web3Provider: any) {
 
         let config = new SpiderConfig();
         config.RpcHost = jsonConfig.EthereumRpcHost;
@@ -18,7 +18,7 @@ export default class Bootstrapper {
         config.ipfsPort = jsonConfig.IpfsRpcPort;
         config.indexerSmAbi = jsonConfig.indexerSmAbi;
         config.indexerSmAddress = jsonConfig.indexerSmAddress;
-        config.PrivateKey = privateKey;
+        config.Web3Provider = web3Provider;
         container.registerInstance("SpiderConfig", config);
         container.register("IIndexerCliService", {
             useClass: IndexerCliService

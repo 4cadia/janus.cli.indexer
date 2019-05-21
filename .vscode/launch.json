@@ -6,10 +6,9 @@
     "configurations": [
         {
             "args": [
-                "--content=C:\\Users\\Victor Hugo Ramos\\Downloads\\TesteVictor\\MinhaPasta\\a.html",
+                "--content=C:\\Users\\Victor Hugo Ramos\\Downloads\\TesteVictor\\MinhaPasta\\paulo.html",
                 "--type=file",
                 "--address=0xB8C0DF194E38EeF45F36Bd8fBbe41893ccc16D20",
-                "--key=ED288550D7E63D5DADBB7A5CE4CC62FF8D12EA549E36532DD5896264D5F4E714",
             ],
             "type": "node",
             "request": "launch",

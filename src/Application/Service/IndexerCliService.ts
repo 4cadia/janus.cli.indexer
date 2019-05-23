@@ -2,7 +2,7 @@ import { injectable, inject } from "tsyringe";
 import IIndexerCliService from "../Interface/IIndexerCliService";
 import SpiderConfig from "janusndxr/dist/src/Domain/Entity/SpiderConfig";
 import IndexRequest from "janusndxr/dist/src/Domain/Entity/IndexRequest";
-import IndexedHtmlResult from "janusndxr/dist/src/Domain/Entity/IndexedHtmlResult";
+import IndexedFile from "janusndxr/dist/src/Domain/Entity/IndexedFile";
 import IIndexerCliValidator from "../Interface/IIndexerCliValidator";
 import Spider from "janusndxr";
 
@@ -12,7 +12,7 @@ export default class IndexerCliService implements IIndexerCliService {
         @inject("IIndexerCliValidator") private _indexerCliValidator: IIndexerCliValidator) {
     }
     AddContent(indexRequest: IndexRequest, ownerAddress: string, callback: any) {
-        let indexResult = new IndexedHtmlResult();
+        let indexResult = new IndexedFile();
         let validationResult = this._indexerCliValidator.ValidateIndexRequest(indexRequest, ownerAddress);
         indexResult.Success = validationResult.isValid();
         indexResult.Errors = validationResult.getFailureMessages();

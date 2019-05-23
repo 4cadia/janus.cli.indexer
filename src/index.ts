@@ -11,6 +11,7 @@ import Bootstrapper from "./Infra/IoC/Bootstrapper";
 import IIndexerCliService from './Application/Interface/IIndexerCliService';
 import MetaMaskConnector from "node-metamask";
 import SpiderConfig from "janusndxr/dist/src/Domain/Entity/SpiderConfig";
+import IndexedFile from "janusndxr/dist/src/Domain/Entity/IndexedFile";
 
 clear();
 let connector = new MetaMaskConnector({
@@ -18,7 +19,7 @@ let connector = new MetaMaskConnector({
 });
 console.log(chalk.red(figlet.textSync('Janus-cli', { horizontalLayout: 'full' })));
 program
-    .version('0.0.38')
+    .version('0.0.39')
     .description("Janus CLI - Web3 Indexer")
     .option('-C, --content <item>', 'Content to be indexed')
     .option('-T, --type <item>', 'Content type,must be "hash","file" or "folder"')
@@ -36,17 +37,21 @@ program
         console.log("Sign in transaction through metamask connector: http://localhost:3333");
         connector.start().then(() => {
             indexerCliService.AddContent(indexRequest, args.address, indexResult => {
-                if (indexResult.Success) {
-                    console.log(`IPFS: http://${config.ipfsHost}/ipfs/${indexResult.IpfsHash}`);
-                    console.log(`IpfsHash: ${indexResult.IpfsHash}`);
-                    if (indexResult.IsHtml) {
-                        console.log(`Description: ${indexResult.HtmlData.Description}`);
-                        console.log(`Tags: ${indexResult.HtmlData.Tags.join()}`);
-                        console.log(`Title: ${indexResult.HtmlData.Title}`);
+                indexResult.forEach(file => {
+                    console.log(`#File ${indexResult.indexOf(file)} - ${file.IpfsHash}`);
+                    console.log(`IPFS: http://${config.ipfsHost}/ipfs/${file.IpfsHash}`);
+
+                    if (file.IsHtml) {
+                        console.log(`Description: ${file.HtmlData.Description}`);
+                        console.log(`Tags: ${file.HtmlData.Tags.join()}`);
+                        console.log(`Title: ${file.HtmlData.Title}`);
                     }
-                }
-                else
-                    console.log(`Errors: ${indexResult.Errors.join()}`);
+
+                    if (!file.Success)
+                        console.log(`Errors: ${file.Errors.join()}`);
+                    console.log("\n");
+                });
+                process.exit();
             });
         });
     })

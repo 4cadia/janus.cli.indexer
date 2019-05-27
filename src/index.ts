@@ -10,6 +10,7 @@ import Bootstrapper from "./Infra/IoC/Bootstrapper";
 import IIndexerCliService from './Application/Interface/IIndexerCliService';
 import MetaMaskConnector from "node-metamask";
 import SpiderConfig from "janusndxr/dist/src/Domain/Entity/SpiderConfig";
+import PackageJson from "../package.json";
 
 clear();
 let connector = new MetaMaskConnector({
@@ -17,7 +18,7 @@ let connector = new MetaMaskConnector({
 });
 console.log(chalk.red(figlet.textSync('Janus-cli', { horizontalLayout: 'full' })));
 program
-    .version('0.0.44')
+    .version(PackageJson.version)
     .description("Janus CLI - Web3 Indexer")
     .option('-C, --content <item>', 'Content to be indexed')
     .option('-T, --type <item>', 'Content type,must be "hash","file" or "folder"')
@@ -25,16 +26,17 @@ program
     .action(args => {
         if (!args.address)
             return console.log(program.helpInformation());
-        let provider = connector.getProvider();
-        Bootstrapper.RegisterServices(provider);
-        let indexRequest = new IndexRequest();
-        let indexerCliService = Bootstrapper.Resolve<IIndexerCliService>("IIndexerCliService");
-        let config = Bootstrapper.Resolve<SpiderConfig>("SpiderConfig");
-        indexRequest.Content = args.content;
-        indexRequest.ContentType = <ContentType>args.type;
+
         console.log("Transaction sign in needed: http://localhost:3333");
         console.log();
         connector.start().then(() => {
+            let provider = connector.getProvider();
+            Bootstrapper.RegisterServices(provider);
+            let indexRequest = new IndexRequest();
+            let indexerCliService = Bootstrapper.Resolve<IIndexerCliService>("IIndexerCliService");
+            let config = Bootstrapper.Resolve<SpiderConfig>("SpiderConfig");
+            indexRequest.Content = args.content;
+            indexRequest.ContentType = <ContentType>args.type;
             indexerCliService.AddContent(indexRequest, args.address, indexResult => {
                 indexResult.forEach(file => {
                     console.log(`#File ${indexResult.indexOf(file)} - ${file.IpfsHash}`);

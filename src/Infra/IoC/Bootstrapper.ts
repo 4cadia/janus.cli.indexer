@@ -26,8 +26,6 @@ export default class Bootstrapper {
         container.register("IIndexerCliValidator", {
             useClass: IndexerCliValidator
         });
-
-
         return container;
     }
 }

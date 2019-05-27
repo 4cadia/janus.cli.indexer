@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const Web3 = require("web3");
 const clear = require("clear");
 const figlet = require("figlet");
 const chalk = require("chalk");
@@ -11,7 +10,6 @@ import Bootstrapper from "./Infra/IoC/Bootstrapper";
 import IIndexerCliService from './Application/Interface/IIndexerCliService';
 import MetaMaskConnector from "node-metamask";
 import SpiderConfig from "janusndxr/dist/src/Domain/Entity/SpiderConfig";
-import IndexedFile from "janusndxr/dist/src/Domain/Entity/IndexedFile";
 
 clear();
 let connector = new MetaMaskConnector({
@@ -19,7 +17,7 @@ let connector = new MetaMaskConnector({
 });
 console.log(chalk.red(figlet.textSync('Janus-cli', { horizontalLayout: 'full' })));
 program
-    .version('0.0.39')
+    .version('0.0.44')
     .description("Janus CLI - Web3 Indexer")
     .option('-C, --content <item>', 'Content to be indexed')
     .option('-T, --type <item>', 'Content type,must be "hash","file" or "folder"')
@@ -34,7 +32,8 @@ program
         let config = Bootstrapper.Resolve<SpiderConfig>("SpiderConfig");
         indexRequest.Content = args.content;
         indexRequest.ContentType = <ContentType>args.type;
-        console.log("Sign in transaction through metamask connector: http://localhost:3333");
+        console.log("Transaction sign in needed: http://localhost:3333");
+        console.log();
         connector.start().then(() => {
             indexerCliService.AddContent(indexRequest, args.address, indexResult => {
                 indexResult.forEach(file => {
@@ -42,6 +41,7 @@ program
                     console.log(`IPFS: http://${config.ipfsHost}/ipfs/${file.IpfsHash}`);
 
                     if (file.IsHtml) {
+                        console.log(`Transaction: https://rinkeby.etherscan.io/tx/${file.HtmlData.EthHash}`);
                         console.log(`Description: ${file.HtmlData.Description}`);
                         console.log(`Tags: ${file.HtmlData.Tags.join()}`);
                         console.log(`Title: ${file.HtmlData.Title}`);

@@ -29,8 +29,6 @@ program
             console.log(program.helpInformation());
             return process.exit();
         }
-
-
         var spinner = new Spinner("Transaction sign in needed: http://localhost:3333");
         spinner.setSpinnerString('|/-\\');
         spinner.start();

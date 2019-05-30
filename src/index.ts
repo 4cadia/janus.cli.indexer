@@ -30,10 +30,9 @@ program
             return process.exit();
         }
         var spinner = new Spinner("Transaction sign in needed: http://localhost:3333");
-        spinner.setSpinnerString('|/-\\');
         spinner.start();
-        console.log();
         connector.start().then(() => {
+            console.log("\n");
             let provider = connector.getProvider();
             Bootstrapper.RegisterServices(provider);
             let indexRequest = new IndexRequest();
@@ -42,8 +41,12 @@ program
             indexRequest.Content = args.content;
             indexRequest.ContentType = <ContentType>args.type;
             indexerCliService.AddContent(indexRequest, args.address, indexResult => {
-                indexResult.forEach(file => {
-                    console.log(`#File ${indexResult.indexOf(file)} - ${file.IpfsHash}`);
+                if (!indexResult.Success) {
+                    console.log(`Errors: ${indexResult.Errors.join()}`);
+                    return process.exit();
+                }
+                indexResult.IndexedFiles.forEach(file => {
+                    console.log(`#File ${indexResult.IndexedFiles.indexOf(file)} - ${file.IpfsHash}`);
                     console.log(`IPFS: http://${config.ipfsHost}/ipfs/${file.IpfsHash}`);
 
                     if (file.IsHtml) {

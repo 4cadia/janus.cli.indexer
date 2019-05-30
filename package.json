@@ -27,7 +27,7 @@
     "commander": "^2.20.0",
     "figlet": "^1.2.1",
     "fluent-ts-validator": "^3.0.2",
-    "janusndxr": "0.0.53",
+    "janusndxr": "0.0.54",
     "node-metamask": "^1.1.2",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^3.2.0",

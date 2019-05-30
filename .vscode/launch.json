@@ -8,7 +8,7 @@
             "args": [
                 "--content=C:\\Users\\Victor Hugo Ramos\\Downloads\\TesteVictor\\4files",
                 "--type=folder",
-                "--address=abc",
+                "--address=0xB8C0DF194E38EeF45F36Bd8fBbe41893ccc16D20",
             ],
             "type": "node",
             "request": "launch",

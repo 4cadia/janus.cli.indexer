@@ -11,6 +11,7 @@ import IIndexerCliService from './Application/Interface/IIndexerCliService';
 import MetaMaskConnector from "node-metamask";
 import SpiderConfig from "janusndxr/dist/src/Domain/Entity/SpiderConfig";
 import PackageJson from "../package.json";
+var Spinner = require('cli-spinner').Spinner;
 
 clear();
 let connector = new MetaMaskConnector({
@@ -24,10 +25,15 @@ program
     .option('-T, --type <item>', 'Content type,must be "hash","file" or "folder"')
     .option('-A, --address <item>', 'Your ETH adress')
     .action(args => {
-        if (!args.address)
-            return console.log(program.helpInformation());
+        if (!args.address) {
+            console.log(program.helpInformation());
+            return process.exit();
+        }
 
-        console.log("Transaction sign in needed: http://localhost:3333");
+
+        var spinner = new Spinner("Transaction sign in needed: http://localhost:3333");
+        spinner.setSpinnerString('|/-\\');
+        spinner.start();
         console.log();
         connector.start().then(() => {
             let provider = connector.getProvider();

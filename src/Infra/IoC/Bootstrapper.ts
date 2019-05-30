@@ -19,6 +19,7 @@ export default class Bootstrapper {
         config.indexerSmAbi = jsonConfig.indexerSmAbi;
         config.indexerSmAddress = jsonConfig.indexerSmAddress;
         config.Web3Provider = web3Provider;
+        
         container.registerInstance("SpiderConfig", config);
         container.register("IIndexerCliService", {
             useClass: IndexerCliService

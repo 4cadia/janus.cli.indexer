@@ -40,7 +40,8 @@ program
             let config = Bootstrapper.Resolve<SpiderConfig>("SpiderConfig");
             indexRequest.Content = args.content;
             indexRequest.ContentType = <ContentType>args.type;
-            indexerCliService.AddContent(indexRequest, args.address, indexResult => {
+            indexRequest.Address = args.address;
+            indexerCliService.AddContent(indexRequest, indexResult => {
                 if (!indexResult.Success) {
                     console.log(`Errors: ${indexResult.Errors.join()}`);
                     return process.exit();

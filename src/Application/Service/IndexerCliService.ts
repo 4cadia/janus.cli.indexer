@@ -11,15 +11,15 @@ export default class IndexerCliService implements IIndexerCliService {
     constructor(@inject("SpiderConfig") private _spiderConfig: SpiderConfig,
         @inject("IIndexerCliValidator") private _indexerCliValidator: IIndexerCliValidator) {
     }
-    AddContent(indexRequest: IndexRequest, ownerAddress: string, callback: any) {
+    AddContent(indexRequest: IndexRequest, callback: any) {
         let indexResult = new IndexedFile();
-        let validationResult = this._indexerCliValidator.ValidateIndexRequest(indexRequest, ownerAddress);
+        let validationResult = this._indexerCliValidator.ValidateIndexRequest(indexRequest, indexRequest.Address);
         indexResult.Success = validationResult.isValid();
         indexResult.Errors = validationResult.getFailureMessages();
         if (!indexResult.Success)
             return callback(indexResult);
 
-        let spider = new Spider(ownerAddress, this._spiderConfig);
+        let spider = new Spider(this._spiderConfig);
         spider.AddContent(indexRequest, indexResult => {
             callback(indexResult);
         });

@@ -6,7 +6,7 @@
     "configurations": [
         {
             "args": [
-                "--content=C:\\Users\\Victor Hugo Ramos\\Downloads\\TesteVictor\\4files",
+                "--content=C:\\Users\\Victor Hugo Ramos\\Downloads\\TesteVictor\\4files2\\4files",
                 "--type=folder",
                 "--address=0xB8C0DF194E38EeF45F36Bd8fBbe41893ccc16D20",
             ],

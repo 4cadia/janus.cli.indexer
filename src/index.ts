@@ -31,8 +31,8 @@ program
         }
         var spinner = new Spinner("Transaction sign in needed: http://localhost:3333");
         spinner.start();
+        console.log("\n");
         connector.start().then(() => {
-            console.log("\n");
             let provider = connector.getProvider();
             Bootstrapper.RegisterServices(provider);
             let indexRequest = new IndexRequest();
@@ -50,15 +50,15 @@ program
                     console.log(`#File ${indexResult.IndexedFiles.indexOf(file)} - ${file.IpfsHash}`);
                     console.log(`IPFS: http://${config.ipfsHost}/ipfs/${file.IpfsHash}`);
 
-                    if (file.IsHtml) {
+                    if (!file.Success)
+                        console.log(`Errors: ${file.Errors.join()}`);
+
+                    else if (file.IsHtml) {
                         console.log(`Transaction: https://rinkeby.etherscan.io/tx/${file.HtmlData.EthHash}`);
                         console.log(`Description: ${file.HtmlData.Description}`);
                         console.log(`Tags: ${file.HtmlData.Tags.join()}`);
                         console.log(`Title: ${file.HtmlData.Title}`);
                     }
-
-                    if (!file.Success)
-                        console.log(`Errors: ${file.Errors.join()}`);
                     console.log("\n");
                 });
                 process.exit();

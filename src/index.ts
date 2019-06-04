@@ -9,7 +9,6 @@ import { ContentType } from 'janusndxr/dist/src/Domain/Entity/ContentType';
 import Bootstrapper from "./Infra/IoC/Bootstrapper";
 import IIndexerCliService from './Application/Interface/IIndexerCliService';
 import MetaMaskConnector from "node-metamask";
-import SpiderConfig from "janusndxr/dist/src/Domain/Entity/SpiderConfig";
 import PackageJson from "../package.json";
 var Spinner = require('cli-spinner').Spinner;
 
@@ -34,21 +33,19 @@ program
         console.log("\n");
         connector.start().then(() => {
             let provider = connector.getProvider();
-            Bootstrapper.RegisterServices(provider);
+            Bootstrapper.RegisterServices();
             let indexRequest = new IndexRequest();
             let indexerCliService = Bootstrapper.Resolve<IIndexerCliService>("IIndexerCliService");
-            let config = Bootstrapper.Resolve<SpiderConfig>("SpiderConfig");
             indexRequest.Content = args.content;
             indexRequest.ContentType = <ContentType>args.type;
             indexRequest.Address = args.address;
-            indexerCliService.AddContent(indexRequest, indexResult => {
+            indexerCliService.AddContent(provider, indexRequest, indexResult => {
                 if (!indexResult.Success) {
                     console.log(`Errors: ${indexResult.Errors.join()}`);
                     return process.exit();
                 }
                 indexResult.IndexedFiles.forEach(file => {
                     console.log(`#File ${indexResult.IndexedFiles.indexOf(file)} - ${file.IpfsHash}`);
-                    console.log(`IPFS: http://${config.ipfsHost}/ipfs/${file.IpfsHash}`);
 
                     if (!file.Success)
                         console.log(`Errors: ${file.Errors.join()}`);

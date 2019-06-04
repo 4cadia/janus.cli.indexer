@@ -1,5 +1,5 @@
 import IndexRequest from "janusndxr/dist/src/Domain/Entity/IndexRequest";
 
 export default interface IIndexerCliService {
-    AddContent(indexRequest: IndexRequest, callback: any);
+    AddContent(web3Provider: any, indexRequest: IndexRequest, callback: any);
 }

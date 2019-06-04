@@ -30,7 +30,6 @@ program
         }
         var spinner = new Spinner("Transaction sign in needed: http://localhost:3333");
         spinner.start();
-        console.log("\n");
         connector.start().then(() => {
             let provider = connector.getProvider();
             Bootstrapper.RegisterServices();
@@ -40,6 +39,7 @@ program
             indexRequest.ContentType = <ContentType>args.type;
             indexRequest.Address = args.address;
             indexerCliService.AddContent(provider, indexRequest, indexResult => {
+                console.log("\n");
                 if (!indexResult.Success) {
                     console.log(`Errors: ${indexResult.Errors.join()}`);
                     return process.exit();

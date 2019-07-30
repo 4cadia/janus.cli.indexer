@@ -1,40 +1,65 @@
 #!/usr/bin/env node
-import "reflect-metadata";
 const clear = require("clear");
 const figlet = require("figlet");
 const chalk = require("chalk");
 const program = require("commander");
-import jsonConfig from "../spiderconfig.json";
-import SpiderConfig from 'janusndxr/dist/src/Domain/Entity/SpiderConfig';
+import "reflect-metadata";
 import IndexRequest from 'janusndxr/dist/src/Domain/Entity/IndexRequest';
 import { ContentType } from 'janusndxr/dist/src/Domain/Entity/ContentType';
-import Spider from 'janusndxr';
+import Bootstrapper from "./Infra/IoC/Bootstrapper";
+import IIndexerCliService from './Application/Interface/IIndexerCliService';
+import MetaMaskConnector from "node-metamask";
+import PackageJson from "../package.json";
+var Spinner = require('cli-spinner').Spinner;
 
 clear();
+let connector = new MetaMaskConnector({
+    port: 3333,
+});
 console.log(chalk.red(figlet.textSync('Janus-cli', { horizontalLayout: 'full' })));
 program
-    .version('1.0.0')
+    .version(PackageJson.version)
     .description("Janus CLI - Web3 Indexer")
-    .option('-I, --ipfs <item>', 'Ipfs Hash of the item to be indexed')
-    .option('-P, --path <item>', 'Path of the item to be indexed')
+    .option('-C, --content <item>', 'Content to be indexed')
+    .option('-T, --type <item>', 'Content type,must be "hash","file" or "folder"')
     .option('-A, --address <item>', 'Your ETH adress')
     .action(args => {
-        let config = new SpiderConfig();
-        config.RpcHost = jsonConfig.EthereumRpcHost;
-        config.RpcPort = jsonConfig.EthereumRpcPort;
-        config.ipfsHost = jsonConfig.IpfsRpcHost;
-        config.ipfsPort = jsonConfig.IpfsRpcPort;
-        config.indexerSmAbi = jsonConfig.indexerSmAbi;
-        config.indexerSmAddress = jsonConfig.indexerSmAddress;
+        if (!args.address) {
+            console.log(program.helpInformation());
+            return process.exit();
+        }
+        var spinner = new Spinner("Transaction sign in needed: http://localhost:3333");
+        spinner.start();
+        connector.start().then(() => {
+            let provider = connector.getProvider();
+            Bootstrapper.RegisterServices();
+            let indexRequest = new IndexRequest();
+            let indexerCliService = Bootstrapper.Resolve<IIndexerCliService>("IIndexerCliService");
+            indexRequest.Content = args.content;
+            indexRequest.ContentType = <ContentType>args.type;
+            indexRequest.Address = args.address;
+            indexerCliService.AddContent(provider, indexRequest, indexResult => {
+                console.log("\n");
+                if (!indexResult.Success) {
+                    console.log(`Errors: ${indexResult.Errors.join()}`);
+                    return process.exit();
+                }
+                indexResult.IndexedFiles.forEach(file => {
+                    console.log(`#File ${indexResult.IndexedFiles.indexOf(file)} - ${file.IpfsHash}`);
 
-        let indexRequest = new IndexRequest();
-        indexRequest.Content = "C:\\Users\\Victor Hugo Ramos\\Downloads\\Ipfs\\lua.html";
-        indexRequest.ContentType = ContentType.FilePath;
+                    if (!file.Success)
+                        console.log(`Errors: ${file.Errors.join()}`);
 
-        let spider = new Spider("0x0f0b73171eb91c502e10c93306c2b84596363f30", config);
-
-        spider.AddContent(indexRequest, indexResult => {
-            console.log(indexResult);
+                    else if (file.IsHtml) {
+                        console.log(`Transaction: https://rinkeby.etherscan.io/tx/${file.HtmlData.EthHash}`);
+                        console.log(`Description: ${file.HtmlData.Description}`);
+                        console.log(`Tags: ${file.HtmlData.Tags.join()}`);
+                        console.log(`Title: ${file.HtmlData.Title}`);
+                    }
+                    console.log("\n");
+                });
+                process.exit();
+            });
         });
-    }).parse(process.argv);
-console.log(program.helpInformation());
+    })
+    .parse(process.argv);
